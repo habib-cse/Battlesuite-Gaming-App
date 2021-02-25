@@ -1,0 +1,21 @@
+<div class="row">
+    {% for team in all_teams %}
+        <div class="col s2 center-align">
+            <div style="width: 100%; margin-top: 10px;">
+                <img src="{{ team.logo.url }}" class="team_logo">
+            </div>
+            <div style="width: 100%; margin-top: 10px; margin-bottom: 10px">
+                <span class="team_name">
+                    {{ team.name }}
+                </span>
+            </div>
+            <div style="width: 100%; margin-bottom: 10px">
+                <button type="submit" name="Submit-Button2" id="button_for_{{ team.name }}"
+                        onclick="challenge_team({{ team.pk }}, {{ user_team.pk }}, {{ tournament.pk }})"
+                        class="action w-button{% if team.pk in challenged_teams %} active_button {% endif %}">
+                    Challenge
+                </button>
+            </div>
+        </div>
+    {% endfor %}
+</div>

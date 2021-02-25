@@ -1,0 +1,46 @@
+  {% extends "base/tournament_base.html" %}
+  {% load static %}
+
+{% block body %}
+
+
+  <div class="section-19">
+    <div class="container-50 w-container">
+      <div id="w-node-6f9d6b0e43cf-aed93d57" class="league-name-box">
+        <h4 class="header">Invites from teams associated with</h4>
+      </div>
+      <div class="addcontent-box"></div>
+    </div>
+    {% for invite in invites %}
+    <div class="container-51 w-container"><img src= "{{user_team.logo.url}}" loading="lazy" width="61" alt="" class="teamlgo">
+      <h3 class="team-nme">{{ user_team.name }}</h3>
+      <h5 class="detail">As a member of this team you were invited to attend a tournament</h5>
+      <h5 class="league-nme">{{invite.tournament.game}}</h5>
+      <div class="tournament-info-box">
+        <div class="tournamentname-schedule">
+          <h4 class="tournamentname"> {{invite.tournament.name}}</h4>
+          <h6 class="schedule-info">Scheduled 4 hours from now</h6>
+        </div>
+        <div class="tournament-mode-info">
+        <h1 class="td-mode">{{invite.tournament.player_amount}} V {{invite.tournament.player_amount}}</h1>
+        <h1 class="td-mode">{{invite.tournament.number_of_teams}} teams</h1>
+        <h1 class="td-mode">{{invite.tournament.game_length }} min</h1>
+        </div>
+        <div class="div-block-127">
+          <p class="tournamentdescription">{{invite.tournament.description}}</p>
+        </div>
+        <form method="POST" action="{% url 'core:invites' %}" name="invite-response">
+          {% csrf_token %}
+          <div class="action-button">
+            <input type="hidden" name="Tournament-To-Edit" value="{{invite.tournament.pk}}">
+            <button type="submit" name="Decline Invite" value="Decline Invite" class="actionbutton _1 w-button" onclick="return confirm('Are you sure you want to decline this Challenge?');">Decline Invite</button>
+            <button type="submit" name="Accept Invite" value="Accept Invite" class="actionbutton action w-button">Accept Invite</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% endfor %}
+  </div>
+
+  {% endblock %}

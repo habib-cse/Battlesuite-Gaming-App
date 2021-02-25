@@ -1,0 +1,34 @@
+{% extends '../base/base.html' %}
+{% load static %}
+
+{% block title %}
+  Share Comments
+{% endblock title %}
+  
+{% block content %} 
+<body class="body-3">
+  {% include 'base/full-navbar.html' %} 
+  <div class="section-15">
+    <h5 class="heading-44"><a href="{% url 'core:community_details' cid %}">Go back</a></h5>
+    <h1 class="heading-43">Share Content</h1>
+    <div class="w-container">
+      <div class="w-form">
+        <form id="email-form" name="email-form" data-name="Email Form" class="form-3" method="POST">
+          {% csrf_token %}
+          <img src="/media/uploads/{{image}}" loading="lazy" width="311" height="330" alt="" class="image-49">
+          <div class="desc">
+            <p class="text">{{content}}</p>
+          </div>
+          <input style="display: none;" type="submit" value="share content" data-wait="Please wait..." class="submit-button w-button">
+        </form>
+
+      </div>
+    </div>
+  </div>
+  <div class="w-container share_button">
+    <form action="" method="POST"> 
+      {% csrf_token %}
+      <input type="submit" value="Share">
+    </form>
+  </div>
+{% endblock %}

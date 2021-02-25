@@ -1,0 +1,52 @@
+{% extends '../base/base.html' %}
+{% load static %}
+{% block content %}
+    {% include 'base/full-navbar.html' %}
+    <link href="{% static '/project-static/css/materialize.css' %}" rel="stylesheet" type="text/css">
+    <div class="container">
+        <h4 class="invite_challenge_header">Invite Team Members</h4>
+        <span style="font-size: 18px; color: #9b8ae4;">Invite team members that you would like to attend this tournament with</span>
+        <div class="row" id="teammembers">
+            {% for teammember in teammembers %}
+                <div class="col s2 center-align">
+                    <div style="width: 100%; margin-top: 10px;">
+                        <img src="{{ user_team.logo.url }}" class="team_logo">
+                    </div>
+                    <div style="width: 100%; margin-top: 10px; margin-bottom: 10px">
+                <span class="team_name">
+                    {{ teammember }}
+                </span>
+                    </div>
+                    <div style="width: 100%; margin-bottom: 10px">
+                        <button type="submit" name="Submit-Button2" id="button_for_{{ teammember.username }}"
+                                onclick="invite_teammember({{ teammember.pk }}, {{ tournament.pk }})"
+                                class="action w-button{% if teammember.pk in invited_teammembers %} active_button {% endif %}">
+                            Invite
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <script>
+        function invite_teammember(invited_user_pk, tournament_pk) {
+            $.ajax({
+                url: "{% url 'core:invite_teammember' %}",
+                type: "GET",
+                data: {
+                    invited_user_pk: invited_user_pk,
+                    tournament_pk: tournament_pk,
+                },
+                cache: false,
+                dataType: "json",
+                success: function (data) {
+                    button_to_change = document.getElementById("button_for_" + data.invited_user_name)
+                    button_to_change.className = "action w-button active active_button"
+
+                }
+            })
+        }
+    </script>
+{% endblock %}

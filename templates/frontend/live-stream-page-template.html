@@ -1,0 +1,57 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block content %}
+<body>
+    {% include 'base/full-navbar.html' %}
+
+  <div>
+    <div class="live-stream-container">
+      <div id="w-node-19f1100adf5b-0a33b486" class="right-section">
+        <div class="match-scoreboard">
+          <div class="team-1-info">
+            <h5 class="t1-name">{{ user_team.name }}</h5><img src="{{user_team.icon.url}}" loading="lazy" width="37" alt="" class="t1-logo">
+            <h5 class="t1-score">{{ user_game_team.points }}</h5>
+          </div>
+          <div class="versus">
+            <h4 class="vs-t">VS</h4>
+          </div>
+          <div class="team-2-info">
+            <h5 class="t2-name">{{ enemy_team.name }}</h5><img src="{{enemy_team.icon.url}}" loading="lazy" width="37" alt="" class="t2-logo">
+            <h5 class="t2-score">{{ enemy_game_team.points }}</h5>
+          </div>
+        </div>
+        <div class="live-chat-box"></div>
+      </div>
+      <div id="w-node-632a8d9d1f0f-0a33b486" class="left-section">
+        <div id="w-node-5ccce40e89bf-0a33b486" class="teaminfo-port"><img src="{{user_team.icon.url}}" loading="lazy" width="70" id="w-node-ff2aa83bab80-0a33b486" alt="" class="team-logo-photo">
+          <div class="box-1">
+            <a href="#" class="link-block w-inline-block">
+              <h5 class="team-name">{{ user_team.name }}</h5><img src="images/bi_bell.png" loading="lazy" width="23" alt="" class="subscribe-icon">
+              <h6 class="subscribers-number">9.1k</h6>
+            </a>
+          </div>
+          <div class="div-block-20"><a href="#" class="button ctv w-button">change team view</a></div>
+        </div>
+        <div class="live-stream-cast-screen">
+            <img class="streamcapture" src="{% url 'core:screen_feed' username=username tournament_pk=tournament_pk %}">
+            <img class="camera-share-video" src="{% url 'core:video_feed' username=username tournament_pk=tournament_pk %}">
+        </div>
+        <div class="tournament-box">
+          <h4 class="heading-8">{{ tournament.name }}</h4>
+          <div class="div-block-17">
+            <h5 class="heading-9">LIVE</h5>
+            <h6 class="heading-10">100k</h6>
+          </div>
+        </div>
+        <div class="players-screen-block">
+            {% for teammember in teammembers %}
+              <div class="player1-sc-box">
+                <h5 class="player-1-name">{{ teammember }}</h5><img src="{% static '/images/call-of-duty-2.jpg' %}" loading="lazy" width="129" srcset="{% static '/images/call-of-duty-2.jpg' %} 500w, {% static '/images/call-of-duty-2.jpg' %} 800w, {% static '/images/call-of-duty-2.jpg' %} 1280w" sizes="129px" alt="" class="player1-screen"></div>
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+{% endblock %}

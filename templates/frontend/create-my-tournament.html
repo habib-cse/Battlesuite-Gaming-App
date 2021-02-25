@@ -1,0 +1,118 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+    {% include 'base/full-navbar.html' %}
+    <link href="{% static '/project-static/css/materialize.css' %}" rel="stylesheet" type="text/css">
+    <div class="container">
+        <a href="{% url 'core:mytournament' username=username %}"><h6 class="go-back-button">Go back</h6></a>
+        <h3 class="heeader">Organize Your Tournament</h3>
+        <div class="form-block w-form">
+            <form id="tournament_form"
+                  action="{% url 'core:edit_tournament' username=username tournament_pk=tournament_pk %}"
+                  method="POST" name="tournament_form" data-name="Email Form" class="form-6" enctype="multipart/form-data"> {% csrf_token %}
+                <div style="width: 100%"><img src="{{ tournament.cover_photo.url }}" style="width: 250px"></div>
+                <span>Add cover photo for tournament</span>
+                <div class="file-field input-field" style="width: 50px">
+                            {{ torunament_form.cover_photo }}
+                            <img src="{% static 'project-static/images/carbon_add-alt.png' %}" loading="lazy" width="49" alt="" class="image-70">
+                </div>
+                <label for="name">Name Tournament</label><input type="text" maxlength="256"
+                                                                name="name" data-name="Name" placeholder=""
+                                                                id="name"
+                                                                value={% if tournament is not None %} "{{ tournament.name }}" {% endif %}>
+
+                <label for="platform">Platform</label>
+                <select id="platform" name="platform" onchange="update_game_select()">
+                    {% for platform, game in platform_games.items %}
+                        <option value="{{ platform }}">{{ platform }}</option>
+                    {% endfor %}
+                </select>
+
+                <div>
+                    <label for="game_select">Game Select</label>
+                    <select name="game_select" id="game_select">
+                    </select>
+                </div>
+
+                <script>
+                    function update_game_select() {
+                        var selected_platform = document.getElementById("platform").value
+                        var platform_games =
+                        {{ platform_games|safe }}
+                        var display_games = platform_games[selected_platform]
+                        var option_string = ""
+                        for (game in display_games) {
+                            option_string = option_string + "<option value='" + display_games[game] + "'>" + display_games[game] + "</option>"
+                        }
+                        console.log(option_string)
+                        document.getElementById("game_select").innerHTML = option_string
+                    }
+
+                    update_game_select()
+                </script>
+                <div>
+                    <label for="deathmath_mode_select">Team Deathmatch Mode</label>
+                    <select id="deathmath_mode_select" name="deathmath_mode_select">
+
+                        {% for player_amount in team_size_choices %}
+                            <option value="{{ player_amount }}"
+                                    {% if tournament is not None %}
+                                        {% with player_amount|split:" " as players %}
+                                            {% if tournament.player_amount|slugify == players|slugify %}
+                                    selected
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% endif %}>{{ player_amount }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="team_number_select">Number of Teams</label>
+                    <select id="team_number_select" name="team_number_select">
+                        {% for number_of_teams in team_number_choices %}
+                            <option value="{{ number_of_teams }}"
+                                    {% if tournament is not None %}
+                                        {% with number_of_teams|split:" " as teams %}
+                                            {% if tournament.number_of_teams|slugify == teams|slugify %}
+                                    selected
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% endif %}>{{ number_of_teams }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="match_duration_select">Match Duration</label>
+                    <select id="match_duration_select" name="match_duration_select">
+                        {% for game_length in game_length_choices %}
+                            <option value="{{ game_length }}"
+                                    {% if tournament is not None %}
+                                        {% with game_length|split:" " as length %}
+                                            {% if tournament.game_length|slugify == length|slugify %}
+                                    selected
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% endif %}>{{ game_length }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <label for="email">Describe the Tournament</label><textarea required="" maxlength="5000"
+                                                                            id="description" name="description"
+                                                                            placeholder="Add full details about tournament and rules"
+                                                                            class="textarea-2 w-input">{% if tournament is not None %}
+                    {{ tournament.description }} {% endif %}</textarea>
+                <label for="email">Enter Date of Tournament (UTC)</label><input type="datetime-local" id="date"
+                                                                                name="date"
+                                                                                value="{% if tournament is not None %}{{ tournament_date }}{% else %}{{ now }}{% endif %}">
+                <input type="submit" value="Next" data-wait="Please wait..." class="w-button">
+            </form>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('select').formSelect();
+        });
+    </script>
+{% endblock %}
+
+ 

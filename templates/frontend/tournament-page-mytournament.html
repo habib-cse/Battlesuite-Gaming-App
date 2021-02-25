@@ -1,0 +1,77 @@
+{% extends "base/tournament_base.html" %}
+{% load static %}
+{% block title %}
+    My Tournaments
+{% endblock %}
+
+{% block body %}
+    <div class="section-19">
+        <div class="container-50 w-container">
+            <div class="addcontent-box">
+                <a href="{% url 'core:create_tournament' username=username tournament_pk="new_tournament" %}">
+                    <img src="{% static '/project-static/images/clarity_add-line.png' %}" loading="lazy"
+                         class="image-68">
+                </a>
+            </div>
+        </div>
+
+        {% for tournament, difference, seconds in tournaments %}
+            <div class="row z-depth-2 container">
+                <div style="padding: 4%">
+                    <h5 class="tournament_name">{{ tournament.name }}</h5>
+                    {% if  tournament.finished %}
+                        <h6 class="schedule-info">Tournament has Finished!</h6>
+                    {% elif tournament.started %}
+                        <h6 class="schedule-info">Tournament has started!</h6>
+                    {% elif seconds < 3600 %}
+                        <h6 class="schedule-info">Scheduled in less than one hour from now</h6>
+                    {% else %}
+                        <h6 class="schedule-info">Scheduled in {{ difference }} hours from now</h6>
+                    {% endif %}
+                    <div>
+                        <h4 class="col s4 tournament_info" style="padding-left: 0px">{{ tournament.player_amount }}
+                            V {{ tournament.player_amount }}</h4>
+                        <h4 class="col s4 tournament_info" style="padding-left: 0px">{{ tournament.number_of_teams }}
+                            teams</h4>
+                        <h4 class="col s4 tournament_info"
+                            style="padding-left: 0px">{{ tournament.game_length }}min</h4>
+                    </div>
+                    <div>
+                        <p class="tournamentdescription">{{ tournament.description }}</p>
+                    </div>
+                    {% if tournament.finished == False %}
+                        {% if tournament.started %}
+                            <a class="action-button"
+                               href="{% url 'core:tournament_waiting' username=username tournament_pk=tournament.pk %}">Go
+                                to Tournament</a>
+                        {% else %}
+                            <form method="POST" action="{% url 'core:mytournament' username=username %}"
+                                  name="team-challenge">
+                                {% csrf_token %}
+                                <div class="row">
+
+                                    <input type="hidden" name="Tournament-To-Edit" value="{{ tournament.pk }}">
+                                    <div class="col s6 center-align">
+                                        <button type="submit" name="Cancel Tournament" value="Cancel Tournament"
+                                                class="actionbutton _1 w-button"
+                                                onclick="return confirm('Are you sure you want to cancel this tournament?');">
+                                            Cancel Tournament
+                                        </button>
+                                    </div>
+                                    <div class="col s6 center-align">
+                                        <button type="submit" name="Edit Tournament" value="Edit Tournament"
+                                                class="actionbutton action w-button">Edit Tournament
+                                        </button>
+                                    </div>
+                                    {% comment %} <a href="#" class="actionbutton _1 w-button">Cancel Tournament</a>
+            <a href="#" class="actionbutton et w-button">Edit Tournament</a> {% endcomment %}
+                                </div>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+{% endblock %}

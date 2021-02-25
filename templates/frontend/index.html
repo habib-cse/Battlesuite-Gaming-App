@@ -1,0 +1,98 @@
+{% extends '../base/base.html' %}
+{% load static %}
+
+{% block title %}
+    Battlesuite
+{% endblock title %}
+
+{% block content %}
+    <body class="body">
+    <link href="{% static '/project-static/css/materialize.css' %}" rel="stylesheet" type="text/css">
+    <div class="row">
+        <div class="match-bcknd-cover"></div>
+        {% include 'base/navbar.html' %}
+        <div class="container">
+            <div class="match-info-container">
+                {% if playing_tournaments == False %}
+                    <h1 class="torunament-name">No Active Tournaments</h1>
+                {% else %}
+                    <div class="hightlight_tournament z-depth-2">
+                        <div class="row">
+                            {% with active_tournaments|slice:":1" as first_tournament %}
+                                {% for tournament, teams in first_tournament.items %}
+                                    <div class="row">
+                                        <h2 class="torunament-name">{{ tournament.name }} </h2>
+                                    </div>
+                                    <div id="scores"></div>
+                                    <script>
+                                        setInterval(function () {
+                                                $.ajax({
+                                                    type: "GET",
+                                                    url: "{% url "core:update_points"%}",  // URL to your view that serves new info
+                                                    data: {
+                                                        user_game_team: {{ teams.0.0.pk }},
+                                                        enemy_game_team: {{ teams.0.1.pk }}
+                                                    }
+                                                }).then(function (response) {
+                                                    $('#scores').html(response);
+                                                });
+                                            }, 1000
+                                        )
+                                    </script>
+
+                                    <div class="row">
+                                        <div class="col s4 center-align">
+                                            <h6 class="team-vs-team">{{ tournament.player_amount }}
+                                                vs {{ tournament.player_amount }}</h6>
+                                        </div>
+                                        <div class="col s4 center-align">
+                                            <h6 class="number-of-games-match">{{ tournament.game_length }} Minutes</h6>
+
+                                        </div>
+                                        <div class="col s4 center-align">
+                                            <h6 class="number-of-teams">{{ tournament.number_of_teams }} Teams</h6>
+
+                                        </div>
+
+                                        <div class="row">
+                                            <p class="tournament-description">{{ tournament.description }}</p>
+                                        </div>
+                                    </div>
+                                    </div>
+                                {% endfor %}
+                            {% endwith %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="row active_tournaments">
+                {% for tournament, teams in active_tournaments.items %}
+                    <div class="col s2 ">
+                    <a href="{% url "core:livestream_view_page" tournament_pk=tournament.pk username=teams.0.0.team.admin.username %}">
+                        <img class="torunament_banner" src="{% static 'project-static/images/Rectangle-141.png' %}">
+                        </a>
+                        <h5 class="heading">{{ tournament.name }}</h5>
+                        <div id="scores{{ tournament.pk }}"></div>
+                        <script>
+                            setInterval(function () {
+                                    $.ajax({
+                                        type: "GET",
+                                        url: "{% url "core:update_points"%}",  // URL to your view that serves new info
+                                        data: {
+                                            user_game_team: {{ teams.0.0.pk }},
+                                            enemy_game_team: {{ teams.0.1.pk }}
+                                        }
+                                    }).then(function (response) {
+                                        $('#scores{{ tournament.pk }}').html(response);
+                                    });
+                                }, 1000
+                            )
+                        </script>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+    </body>
+
+{% endblock content %}

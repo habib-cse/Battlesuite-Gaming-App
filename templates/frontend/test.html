@@ -1,0 +1,33 @@
+{% load static %}
+<link rel="stylesheet" href="{% static '/project-static/css/style.css' %}">
+<div id="video_player" onmouseover="display_video_buttons()" onmouseleave="hide_video_buttons()" class="video_player">
+    <img class="streamcapture2" id="streamcapture"src="{% static "/project-static/images/gameplay_test_image.png" %}">
+    <img class="play_button" style="display: none" id="play_button" src="{% static '/project-static/images/play_button.png' %}">
+    <img class="expand_button" style="display: none" onclick="openFullscreen()" id="expand_button" src="{% static '/project-static/images/expand_icon.png' %}">
+</div>
+
+<script>
+    function display_video_buttons(){
+        document.getElementById("play_button").style.display = "block"
+        document.getElementById("expand_button").style.display = "block"
+        document.getElementById("streamcapture").style.opacity = "0.6"
+    }
+    function hide_video_buttons(){
+        document.getElementById("play_button").style.display = "none"
+        document.getElementById("expand_button").style.display = "none"
+        document.getElementById("streamcapture").style.opacity = "1"
+    }
+</script>
+
+<script>
+var elem = document.getElementById("streamcapture");
+function openFullscreen() {
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (elem.webkitRequestFullscreen) { /* Safari */
+    elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) { /* IE11 */
+    elem.msRequestFullscreen();
+  }
+}
+</script>

@@ -1,0 +1,33 @@
+{% extends "base/tournament_base.html" %}
+{% load static %}
+{% block body %}
+ {% for challenge in challenges %}
+  <div class="container-51 w-container"><img src= "{{challenge.host_team.logo.url}}" loading="lazy" width="61" alt="" class="team_logo">
+    <h3 class="team-nme">{{ challenge.tournament.creator }}</h3>
+    <h5 class="detail">Has challenged to one of his tournament</h5>
+    <h5 class="league-nme">{{tournament.game_name}}</h5>
+    <div class="tournament-info-box">
+      <div class="tournamentname-schedule">
+        <h4 class="tournamentname">{{ tournament.name }}</h4>
+        <h6 class="schedule-info">Scheduled 4 hours from now</h6>
+      </div>
+      <div class="tournament-mode-info">
+        <h1 class="td-mode">{{challenge.tournament.player_amount}} V {{challenge.tournament.player_amount}}</h1>
+        <h1 class="td-mode">{{ challenge.tournament.number_of_teams}} teams</h1>
+        <h1 class="td-mode">{{ challenge.tournament.game_length }} min</h1>
+      </div>
+      <div class="div-block-127">
+        <p class="tournamentdescription">{{ challenge.tournament.description }}</p>
+      </div>
+      <form method="POST" action="{% url 'core:challenges' username=username %}">
+        {% csrf_token %}
+        <div class="action-button">
+          <input type="hidden" name="Tournament-To-Edit" value="{{challenge.tournament.pk}}">
+          <button type="submit" name="Decline Challenge" value="Decline Challenge" class="actionbutton _1 w-button" onclick="return confirm('Are you sure you want to decline this Challenge?');">Decline Challenge</button>
+          <button type="submit" name="Accept Challenge" value="Accept Challenge" class="actionbutton action w-button">Accept Challenge</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+{% endblock %}

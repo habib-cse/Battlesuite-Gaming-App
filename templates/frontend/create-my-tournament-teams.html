@@ -1,0 +1,138 @@
+{% extends '../base/base.html' %}
+{% load static %}
+{% block content %}
+    {% include 'base/full-navbar.html' %}
+    <link href="{% static '/project-static/css/materialize.css' %}" rel="stylesheet" type="text/css">
+    <script>
+        var challenge_teams = []
+        {% for team in all_teams %}
+            team_icon_url = "{{ team.logo.url }}"
+            team_name = "{{ team.name }}"
+            team_challenged = {% if team in challenged_teams %} true {% else %} false {% endif %}
+            challenge_teams.push([team_icon_url, team_name, team_challenged])
+        {% endfor %}
+    </script>
+
+    <script>
+        function query_challenges(team_array) {
+        }
+    </script>
+    <div class="container">
+        <a href="{% url 'core:mytournament' username=username %}"><h5 class="go-back-button">Go back</h5></a>
+        <h4 class="invite_challenge_header">Organize Your Tournament</h4>
+        <div style="width: 100%"><img src="{{ tournament.cover_photo.url }}" style="width: 250px; max-height: 250px"></div>
+        <h4 class="invite_challenge_header">Invite Team Members</h4>
+        <span style="font-size: 18px; color: #9b8ae4;">Invite team members that you would like to attend this tournament with</span>
+        <div class="row" id="teammembers">
+            {% for teammember in teammembers %}
+                <div class="col s2 center-align">
+                    <div style="width: 100%; margin-top: 10px;">
+                        <img src="{{ user_team.logo.url }}" class="team_logo">
+                    </div>
+                    <div style="width: 100%; margin-top: 10px; margin-bottom: 10px">
+                <span class="team_name">
+                    {{ teammember }}
+                </span>
+                    </div>
+                    <div style="width: 100%; margin-bottom: 10px">
+                        <button type="submit" name="Submit-Button2" id="button_for_{{ teammember.username }}"
+                                onclick="invite_teammember({{ teammember.pk }}, {{ tournament.pk }})"
+                                class="action w-button{% if teammember.pk in invited_teammembers %} active_button {% endif %}">
+                            Invite
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <h4 class="invite_challenge_header">Challenge Teams</h4>
+        <div class="input-field z-depth-1 center-align" style="border-radius: 25px;">
+            <input class="validate" id="team_search_input" style="width: 95%" type="text"
+                   onchange="filter_teams({{ user_team.pk }}, {{ tournament.pk }})">
+            <label style="padding-left: 30px" for="team_search_input" class="black-text">Search for team name</label>
+        </div>
+        <div id="challenge_team_div">
+            <div class="row">
+                {% for team in all_teams %}
+                    <div class="col s2 center-align">
+                        <div style="width: 100%; margin-top: 10px;">
+                            <img src="{{ team.logo.url }}" class="team_logo">
+                        </div>
+                        <div style="width: 100%; margin-top: 10px; margin-bottom: 10px">
+                <span class="team_name">
+                    {{ team.name }}
+                </span>
+                        </div>
+                        <div style="width: 100%; margin-bottom: 10px">
+                            <button type="submit" name="Submit-Button2" id="button_for_{{ team.name }}"
+                                    onclick="challenge_team({{ team.pk }}, {{ user_team.pk }}, {{ tournament.pk }})"
+                                    class="action w-button{% if team.pk in challenged_teams %} active_button {% endif %}">
+                                Challenge
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <a href="{% url 'core:mytournament' username=username %}">
+            <button class="action w-button">
+                Complete Tournament Creation
+            </button>
+        </a>
+
+    </div>
+
+    <script>
+        function challenge_team(challenged_team_pk, host_team_pk, tournament_pk) {
+            $.ajax({
+                url: "{% url 'core:challenge_team' %}",
+                type: "GET",
+                data: {
+                    challenged_team_pk: challenged_team_pk,
+                    tournament_pk: tournament_pk,
+                    host_team_pk: host_team_pk
+                },
+                cache: false,
+                dataType: "json",
+                success: function (data) {
+                    button_to_change = document.getElementById("button_for_" + data.team_name)
+                    button_to_change.className = "action w-button active active_button"
+
+                }
+            });
+        }
+    </script>
+    <script>
+        function invite_teammember(invited_user_pk, tournament_pk) {
+            $.ajax({
+                url: "{% url 'core:invite_teammember' %}",
+                type: "GET",
+                data: {
+                    invited_user_pk: invited_user_pk,
+                    tournament_pk: tournament_pk,
+                },
+                cache: false,
+                dataType: "json",
+                success: function (data) {
+                    button_to_change = document.getElementById("button_for_" + data.invited_user_name)
+                    button_to_change.className = "action w-button active active_button"
+
+                }
+            })
+        }
+    </script>
+    <script>
+        function filter_teams(host_team_pk, tournament_pk) {
+            $.ajax({
+                url: "{% url 'core:list_teams' %}",
+                type: "GET",
+                data: {
+                    search: document.getElementById('team_search_input').value,
+                    host_team_pk: host_team_pk,
+                    tournament_pk: tournament_pk,
+                },
+            }).then(function (response) {
+                $('#challenge_team_div').html(response)
+            });
+        }
+    </script>
+{% endblock %}
